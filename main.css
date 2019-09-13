@@ -1,0 +1,51 @@
+.container {
+
+    margin: auto;
+    height: 297mm;
+    width: 210mm;
+    background-color: bisque;
+}
+
+
+.top-section {
+    height: 50px;
+    width: 100%;
+    overflow: scroll;
+
+}
+
+.middle-section-container {
+    overflow: scroll;
+    height: 500px;
+    width: 100%;
+
+}
+
+.middle-section {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: unset;
+}
+
+.bottom-section {
+    height: 50px;
+    width: 100%;
+
+}
+
+
+#iframe_annotation {
+    height: 100%;
+    width: 100%;
+}
+
+
+
+#annotatedNodeElm {
+    /* position: relative; */
+    /* top: 0px;
+left: 0px; */
+}
+
+.annotatedChild {}
