@@ -1,11 +1,33 @@
 .container {
 
     margin: auto;
-    height: 297mm;
-    width: 210mm;
+    width: 100%;
     background-color: bisque;
 }
 
+.left-section {
+    height: 297mm;
+    width: 210mm;
+}
+
+.inlblc {
+    display: inline-block;
+}
+
+.right-section {
+
+    width: 400px;
+    height: 500px;
+    overflow: scroll;
+    /* margin: 20px; */
+    padding: 20px;
+}
+
+.right-section div {
+    background-color: blanchedalmond;
+    border: 2px solid brown;
+    border-radius: 4px;
+}
 
 .top-section {
     height: 50px;
