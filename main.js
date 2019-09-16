@@ -1,16 +1,34 @@
 let annotatedNode = {
-    tag_1_1: {
+    tag_1_100_30: {
         top: 100,
         left: 30,
-        tag: 'tag_1',
-        value: 'html',
+        tag: 'name',
+        value: '<span>Ravi</span>',
+        start: 20,
+        end: 26
+    },
+    tag_1_100_30: {
+        top: 100,
+        left: 30,
+        tag: 'email',
+        value: 'vipul@naukri.com',
         start: 20,
         end: 26
     }
-
 };
+
+
 $(window).on("load", function () {
+
+
     //...............
+
+    function getUniqueID() {
+        // Math.random should be unique because of its seeding algorithm.
+        // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+        // after the decimal.
+        return '_' + Math.random().toString(36).substr(2, 9);
+    };
     let num = 1;
     // var startPos = { x: 0, y: 0 }
     // var endPos = { x: 0, y: 0 }
@@ -24,8 +42,14 @@ $(window).on("load", function () {
         iframe_annotation.contentWindow.document;
     node.addEventListener('mouseup', getEndPosition);
 
-    node.designMode = "on";
-    node.body.contentEditable = true;
+    var elements = node.querySelectorAll('body *');
+    let elementsLength = elements.length;
+    for (let i = 0; i < elementsLength; i++) {
+        elements[i].setAttribute('data-ann-id', getUniqueID() + '-' + i)
+    }
+
+    // node.designMode = "on";
+    // node.body.contentEditable = true;
 
     //Assign iframe content's height to its child 
     document.getElementById('iframe_annotation').style.height = document.getElementById('iframe_annotation').contentDocument.body.scrollHeight + 100 + 'px';
@@ -40,7 +64,6 @@ $(window).on("load", function () {
     function getEndPosition(event) {
         var range;
 
-        var targetOffset = getXYRelativeToWindow(event.target);
         // if (document.selection && document.selection.createRange) {
         //     range = document.selection.createRange();
         //     console.log('range.htmlText', range.htmlText);
@@ -48,19 +71,15 @@ $(window).on("load", function () {
         // }
         // else 
         if (node.getSelection) {
-            var selection = node.getSelection();
+            let selection = node.getSelection();
             if (selection.rangeCount > 0) {
                 range = selection.getRangeAt(0);
 
-                var clonedSelection = range.cloneContents();
-                debugger;
-
+                let clonedSelection = range.cloneContents();
+                //get clientRect position of selected node or characters
                 let clientRects = range.getClientRects();
-
                 let firstRect = clientRects[0];
                 let lastRect = clientRects[0];
-
-
 
                 var div = document.createElement('div');
                 div.appendChild(clonedSelection);
@@ -69,7 +88,8 @@ $(window).on("load", function () {
 
                 var childHtml = getChildHtml(`${div.innerHTML}`);
                 var parentHtml = `${node.body.parentNode.outerHTML}`;
-                var start = parentHtml.indexOf(childHtml);
+                // debugger;
+                var start = getSelectedNodeIndex(parentHtml, childHtml, range, selection, event);
                 var end = start + childHtml.length;
 
                 // console.log('gggggggggggg', start, end, parentHtml)
@@ -80,9 +100,9 @@ $(window).on("load", function () {
                     tag: 'tag_2',
                     start,
                     end
-                })
+                });
 
-                updateAnnotationNode()
+                // updateAnnotationNode()
 
                 return div.innerHTML;
             }
@@ -91,22 +111,35 @@ $(window).on("load", function () {
     }
 
     function getChildHtml(childHtml) {
-        var closeAngelIndex = childHtml.indexOf('>');
-        var openAngelLastIndex;
-        var newChildHtml;
-        if (closeAngelIndex > -1) {
-            newChildHtml = childHtml.slice(closeAngelIndex + 1);
-            openAngelLastIndex = newChildHtml.lastIndexOf('<');
-            if (openAngelLastIndex > -1) {
-                newChildHtml = newChildHtml.slice(0, openAngelLastIndex);
-            }
-        } else {
-            newChildHtml = childHtml;
+
+        //Add all openig tags data
+        while (childHtml.indexOf('<') === 0) {
+            childHtml = childHtml.slice(childHtml.indexOf('>') + 1);
         }
-        return newChildHtml
+
+        //Delete all end tags data
+        while (childHtml.lastIndexOf('>') === childHtml.length - 1) {
+            childHtml = childHtml.slice(0, childHtml.lastIndexOf('<'));
+        }
+        return childHtml;
     }
 
-    // Create annotatedNodeElm
+    function getSelectedNodeIndex(parentHtml, selectedItem, range, selection, event) {
+        // console.log('range', range, selection);
+        if (selectedItem.includes('<') && selectedItem.includes('>')) {
+            return parentHtml.indexOf(selectedItem);
+        } else {
+            let parentElement = range.commonAncestorContainer;
+            while (parentElement.nodeType !== 1) {
+                parentElement = parentElement.parentElement;
+            }
+            let commonParentHtml = parentElement.outerHTML;
+            let commonParentHtmlStart = parentHtml.indexOf(commonParentHtml);
+            let selectedItemStart = commonParentHtml.indexOf(selectedItem);
+            return commonParentHtmlStart + selectedItemStart;
+        }
+    }
+
 
     function updateAnnotateConfig(config) {
 
