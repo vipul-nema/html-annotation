@@ -23,6 +23,15 @@
     padding: 20px;
 }
 
+#select-annt-tag {
+    height: 30px;
+    padding: 5px;
+    width: 200px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    margin: 5px 20px;
+}
+
 .right-section div {
     background-color: blanchedalmond;
     border: 2px solid brown;
@@ -30,9 +39,9 @@
 }
 
 .top-section {
-    height: 50px;
+    height: 120px;
     width: 100%;
-    overflow: scroll;
+    border-bottom: 1px solid black;
 
 }
 

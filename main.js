@@ -5,7 +5,8 @@ let annotatedNodeJson = {
         tag: 'name',
         value: '<span>Ravi</span>',
         start: 50, //Start index
-        end: 67 //End index
+        end: 67, //End index,
+        backgroundColor: 'blue'
     },
     email_200_50: {
         top: 200,
@@ -13,7 +14,8 @@ let annotatedNodeJson = {
         tag: 'email',
         value: 'vipul@naukri.com',
         start: 20,
-        end: 36
+        end: 36,
+        backgroundColor: 'green'
     }
 };
 
@@ -21,12 +23,35 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     class AnnotationClass {
         constructor(name) {
+            this.tagOptions = [
+                {
+                    name: 'name',
+                    value: "Name",
+                    backgroundColor: 'blue'
+                },
+                {
+                    name: 'email',
+                    value: "Email",
+                    backgroundColor: 'green'
+                },
+                {
+                    name: 'skill',
+                    value: "Skill",
+                    backgroundColor: 'grey'
+                },
+                {
+                    name: 'company',
+                    value: "Company",
+                    backgroundColor: 'aqua'
+                }
+            ];
             this.initialize();
         }
 
         initialize() {
             //Event binding on iframe
-            this.tagName = 'name';
+            this.currentTagOption = this.tagOptions[0];
+
             window.getSelection().addRange(new Range());
             let iframe_annotation = document.getElementById('iframe_annotation');
 
@@ -107,9 +132,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         top: firstRect.top,
                         left: firstRect.left,
                         value: childHtml,
-                        tag: this.tagName,
+                        tag: this.currentTagOption.name,
                         start,
-                        end
+                        end,
+                        backgroundColor: this.currentTagOption.backgroundColor
+
                     });
 
                     this.updateAnnotationNode()
@@ -161,14 +188,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 tag: config.tag,
                 value: config.value,
                 start: config.start,
-                end: config.end
+                end: config.end,
+                backgroundColor: config.backgroundColor
             };
             return;
 
         }
 
         createNode(config) {
-            let { top, left, value, tag } = config;
+            let { top, left, value, tag, backgroundColor } = config;
             let annotatedChild = document.createElement('span');
             annotatedChild.className = 'annotatedChild';
 
@@ -177,7 +205,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 top: (top - 30) + 'px',
                 left: (left - 20) + 'px',
                 'z-index': 9000,
-                'background-color': '#ffffff',
+                'background-color': backgroundColor || '#fffff',
                 height: '10px',
                 'padding': '10px',
                 width: '100px',
@@ -239,37 +267,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
             const selectAnntElm = document.getElementById('select-annt-tag');
             selectAnntElm.addEventListener('change', this.handleTagChange.bind(this))
 
-            const options = [
-                {
-                    name: 'name',
-                    value: "Name"
-                },
-                {
-                    name: 'email',
-                    value: "Email"
-                },
-                {
-                    name: 'skill',
-                    value: "Skill"
-                },
-                {
-                    name: 'company',
-                    value: "Company"
-                }
-            ];
-
             let optionsElm = [];
-            options.forEach((option, index) => {
+            this.tagOptions.forEach((option, index) => {
                 let optionElm = document.createElement('option');
                 optionElm.innerText = option.value;
                 optionElm.setAttribute('value', option.name)
                 optionElm.className = "select-annt-option";
+                optionElm.style.backgroundColor = option.backgroundColor;
+                optionElm.style.color = '#fffff';
+
                 selectAnntElm.appendChild(optionElm)
             });
         }
         handleTagChange(event) {
             debugger;
             this.tagName = event.target.value;
+
+            this.currentTagOption = this.tagOptions.filter((tagOption) => {
+                if (tagOption.name == this.tagName) {
+                    return true;
+                }
+            })[0];
+
         }
     }
 
